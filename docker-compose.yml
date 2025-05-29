@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -10,8 +8,23 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - DATABASE_HOST=mysql
+      - DATABASE_USER=dmuser
+      - DATABASE_PASSWORD=dmpasswd
+      - DATABASE_NAME=dmdb
+      - DATABASE_PORT=3306
     networks:
       - app-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+    command: >
+      sh -c "
+        echo 'Esperando o MySQL iniciar completamente...'
+        sleep 10
+        npm start
+      "
 
   frontend:
     build:
@@ -38,8 +51,16 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./scripts/init:/docker-entrypoint-initdb.d/
+
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "dmuser", "-pdmpasswd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   mysql_data:

@@ -27,7 +27,8 @@
             ],
             "polyfills": [
               "zone.js"
-            ]
+            ],
+            "outputPath": "dist/web"
           },
           "configurations": {
             "production": {
