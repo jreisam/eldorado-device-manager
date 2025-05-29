@@ -1,5 +1,30 @@
 version: '3.8'
+
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: ms/Dockerfile
+    container_name: ms-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    container_name: web-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
   mysql:
     image: mysql:latest
     container_name: mysql-dmdb
@@ -14,11 +39,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - mysql-network
-
-networks:
-  mysql-network:
-    driver: bridge
+      - app-network
 
 volumes:
   mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
