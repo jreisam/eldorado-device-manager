@@ -2,8 +2,8 @@ services:
   backend:
     build:
       context: .
-      dockerfile: ms/Dockerfile
-    container_name: ms-backend
+      dockerfile: api/Dockerfile
+    container_name: api-backend
     ports:
       - "3000:3000"
     environment:
@@ -51,7 +51,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./scripts/init:/docker-entrypoint-initdb.d/
+      - ./scripts/sql:/docker-entrypoint-initdb.d/
 
     networks:
       - app-network
