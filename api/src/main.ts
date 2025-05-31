@@ -1,11 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  app.enableCors();
+
+  const config = new DocumentBuilder()
+    .setTitle('Eldorado Device Manager')
+    .setDescription('API for Eldorado Device Manager')
+    .setVersion('1.0')
+    .addTag('eldorado-device-manager')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
+
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

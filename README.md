@@ -12,6 +12,8 @@ Projeto desafio para o Instituto Eldorado: um gerenciador de Dispositivos (e sua
 
 [EN] Challenge project for Eldorado Institute application: a Device (and its Categories) manager with basic features.
 
+Swager: [http://localhost:3000/api](http://localhost:3000/api)
+
 ## Technology Stack
 
 [NestJS (Node 22.16.0)](https://nestjs.com) Frontend
