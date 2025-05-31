@@ -5,6 +5,9 @@
       <button mat-raised-button color="primary" routerLink="/devices/create">
         Novo Dispositivo
       </button>
+      <button mat-raised-button (click)="cancel()">
+        Voltar
+      </button>
     </mat-card-subtitle>
     <mat-card-content>
       <table mat-table [dataSource]="devices" class="full-width-table">

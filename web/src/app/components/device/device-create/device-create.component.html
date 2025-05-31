@@ -29,13 +29,13 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Número de Peça</mat-label>
-        <input matInput type="number" formControlName="part_number" placeholder="Número de peça">
+        <mat-label>Número da Peça</mat-label>
+        <input matInput type="number" formControlName="part_number" placeholder="part #number">
         <mat-error *ngIf="form.get('part_number')?.errors?.['required']">
-          Número de peça é obrigatório
+          Número da peça é obrigatório
         </mat-error>
         <mat-error *ngIf="form.get('part_number')?.errors?.['min']">
-          Número de peça deve ser positivo
+          Número da peça deve ser positivo
         </mat-error>
       </mat-form-field>
     </mat-card-content>

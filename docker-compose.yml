@@ -23,8 +23,9 @@ services:
       sh -c "
         echo 'Esperando o MySQL iniciar completamente...'
         sleep 10
-        npm start
+        node dist/main
       "
+
 
   frontend:
     build:
@@ -37,6 +38,9 @@ services:
       - backend
     networks:
       - app-network
+    volumes:
+      - ./nginx-logs:/var/log/nginx
+
 
   mysql:
     image: mysql:latest
@@ -51,7 +55,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./scripts/sql:/docker-entrypoint-initdb.d/
 
     networks:
       - app-network

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Device } from '../../../models/device';
 import { DeviceService } from '../../../services/device.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-device-list',
@@ -15,7 +16,8 @@ export class DeviceListComponent implements OnInit {
 
   constructor(
     private deviceService: DeviceService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+  private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -35,5 +37,9 @@ export class DeviceListComponent implements OnInit {
         duration: 3000
       });
     });
+  }
+
+  cancel(): void {
+    this.router.navigate(['/']);
   }
 }

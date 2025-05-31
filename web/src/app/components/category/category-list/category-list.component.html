@@ -5,6 +5,9 @@
       <button mat-raised-button color="primary" routerLink="/categories/create">
         Nova Categoria
       </button>
+      <button mat-raised-button (click)="cancel()">
+        Voltar
+      </button>
     </mat-card-subtitle>
     <mat-card-content>
       <table mat-table [dataSource]="categories" class="full-width-table">

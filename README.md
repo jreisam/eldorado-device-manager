@@ -8,21 +8,21 @@
 
 ## Eldorado Device Management
 
-Projeto desafio para o Instituto Eldorado: um gerenciador de Dispositivos com manipulação básico incluindo a Categoria do mesmo.
+Projeto desafio para o Instituto Eldorado: um gerenciador de Dispositivos (e suas Categorias) com funcionalidades básicas.
 
-[EN] Challenge project for Eldorado Institute: a Device manager with basic features including device Category.
+[EN] Challenge project for Eldorado Institute application: a Device (and its Categories) manager with basic features.
 
 ## Technology Stack
 
-[NestJS](https://nestjs.com) Front-end
+[NestJS (Node 22.16.0)](https://nestjs.com) Frontend
 
-[Angular](https://angular.dev) Back-end
+[Angular (20.0.0)](https://angular.dev) Backend
 
-[MySQL](https://www.mysql.com) Database
+[MySQL (9.3)](https://www.mysql.com) Persistence
 
-[Docker](https://www.docker.com) Containerizing
+[Docker (4.40)](https://www.docker.com) Containerizing
 
-[AWS](https://aws.amazon.com) Provisioning
+[AWS Cloud](https://aws.amazon.com) Provisioning
 
 ## Project setup
 

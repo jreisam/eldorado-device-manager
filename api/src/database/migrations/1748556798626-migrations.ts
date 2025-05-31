@@ -5,19 +5,18 @@ import * as fs from 'node:fs';
 export class Migrations1748556798626 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     try {
-      // Use path.resolve para obter o caminho absoluto
       const sqlFilePath = path.resolve(
         process.cwd(),
         'src',
         'database',
         'sql',
-        '01-dmdb-initial-data.sql',
+        '00-struct-and-populate.sql',
       );
 
-      console.log('Tentando ler arquivo SQL de:', sqlFilePath);
+      console.log('Lendo script SQL de:', sqlFilePath);
 
       if (!fs.existsSync(sqlFilePath)) {
-        throw new Error(`Arquivo SQL não encontrado: ${sqlFilePath}`);
+        throw new Error(`Script SQL não encontrado: ${sqlFilePath}`);
       }
 
       const sqlScript = fs.readFileSync(sqlFilePath, 'utf8');

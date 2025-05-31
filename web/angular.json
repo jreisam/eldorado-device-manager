@@ -28,7 +28,8 @@
             "polyfills": [
               "zone.js"
             ],
-            "outputPath": "dist/web"
+            "outputPath": "dist/browser",
+            "baseHref": "/"
           },
           "configurations": {
             "production": {

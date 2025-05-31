@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Category } from '../../../models/category';
 import { CategoryService } from '../../../services/category.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-category-list',
@@ -16,6 +17,7 @@ export class CategoryListComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private snackBar: MatSnackBar,
+    private router: Router,
   ) {
   }
 
@@ -36,5 +38,9 @@ export class CategoryListComponent implements OnInit {
         duration: 3000,
       });
     });
+  }
+
+  cancel(): void {
+    this.router.navigate(['/']);
   }
 }

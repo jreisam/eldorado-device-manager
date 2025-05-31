@@ -30,7 +30,7 @@ export class DeviceCreateComponent implements OnInit {
       color: ['', [
         Validators.required,
         Validators.maxLength(16),
-        Validators.pattern(/^[a-zA-Z]+$/)
+        Validators.pattern(/^[a-zA-Z\s]+$/),
       ]],
       part_number: ['', [Validators.required, Validators.min(1)]]
     });
