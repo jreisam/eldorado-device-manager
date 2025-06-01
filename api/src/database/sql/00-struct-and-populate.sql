@@ -1,5 +1,5 @@
+CREATE DATABASE IF NOT EXISTS dmdb;
 USE dmdb;
-
 CREATE TABLE IF NOT EXISTS categories (
                             id INT AUTO_INCREMENT PRIMARY KEY,
                             name VARCHAR(128) NOT NULL
