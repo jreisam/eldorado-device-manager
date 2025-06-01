@@ -6,43 +6,56 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-## Eldorado Device Management
+# Eldorado Device Management
 
 Projeto desafio para o Instituto Eldorado: um gerenciador de Dispositivos (e suas Categorias) com funcionalidades básicas.
 
-[EN] Challenge project for Eldorado Institute application: a Device (and its Categories) manager with basic features.
+_[EN] Challenge project for Eldorado Institute application: a Device (and its Categories) manager with basic features._
 
 Swager: [http://localhost:3000/api](http://localhost:3000/api)
 
-## Technology Stack
+## Stack Tecnológica
 
 [NestJS (Node 22.16.0)](https://nestjs.com) Frontend
 
 [Angular (20.0.0)](https://angular.dev) Backend
 
-[MySQL (9.3)](https://www.mysql.com) Persistence
+[MySQL (9.3)](https://www.mysql.com) Persistência de Dados
 
-[Docker (4.40)](https://www.docker.com) Containerizing
+[Docker (4.40)](https://www.docker.com) Containerização
 
-[AWS Cloud](https://aws.amazon.com) Provisioning
+[AWS Cloud](https://aws.amazon.com) Provisionamento
 
-## Project setup
+## Execução Rápida
+
+### Usando Docker (Recomendado)
+
+Para executar toda a aplicação (frontend, backend e banco de dados) usando Docker:
 
 ```bash
-$ npm install
+# 1. Vá ao diretório raiz
+cd eldorado-device-manager
+
+# 2. Inicie todos os serviços com Docker Compose
+docker compose up -d
+
+# Para finalizar e remover os containers
+docker compose down -v
 ```
 
-## Compile and run the project
+### Usando NPM e GitBash
+
+- _Tenha instalado o Node **22** ou superior (recomendo o uso do [NVM](https://github.com/nvm-sh/nvm))_
+- _Tenha o MySQL instalado (**9** ou superior)_
+
+<p>Após instalar o Node, siga os passos:</p>
 
 ```bash
-# development
-$ npm run start
+# 1. Vá ao diretório raiz do projeto
+cd eldorado-device-manager
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# 2. Execute o script 
+./start-local.sh
 ```
 
 ## Run tests
