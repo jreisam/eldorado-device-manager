@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY api/package*.json ./
 RUN npm install
-
+RUN chmod +x ./node_modules/.bin/nest
 COPY api/ .
 RUN npm run build
 
