@@ -1,25 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoryController } from './category.controller';
 import { CategoryService } from '../service/category.service';
-import { CreateCategoryDto } from '../dto/create-category.dto';
+import { CategoryDto } from '../dto/category.dto';
 import { NotFoundException } from '@nestjs/common';
-
-describe('CategoryController', () => {
-  let controller: CategoryController;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [CategoryController],
-    }).compile();
-
-    controller = module.get<CategoryController>(CategoryController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
-
 
 describe('CategoryController', () => {
   let controller: CategoryController;
@@ -58,20 +41,23 @@ describe('CategoryController', () => {
 
   describe('create', () => {
     it('should create a new category', async () => {
-      const createCategoryDto: CreateCategoryDto = {
+      // Arrange
+      const createCategoryDto: CategoryDto = {
         name: 'Nova Categoria',
       };
 
       const expectedResult = {
         id: 1,
-        ...createCategoryDto,
+        name: 'Nova Categoria',
+        devices: [],
       };
 
-      jest.clearAllMocks();
       jest.spyOn(service, 'create').mockResolvedValue(expectedResult);
 
+      // Act
       const result = await controller.create(createCategoryDto);
 
+      // Assert
       expect(result).toEqual(expectedResult);
       expect(service.create).toHaveBeenCalledWith(createCategoryDto);
       expect(service.create).toHaveBeenCalledTimes(1);
@@ -80,25 +66,31 @@ describe('CategoryController', () => {
 
   describe('findAll', () => {
     it('should return an array of categories', async () => {
+      // Arrange
       const expectedCategories = [
-        { id: 1, name: 'Categoria A' },
-        { id: 2, name: 'Categoria B' },
-        { id: 3, name: 'Categoria C' },
+        { id: 1, name: 'Categoria A', devices: [] },
+        { id: 2, name: 'Categoria B', devices: [] },
+        { id: 3, name: 'Categoria C', devices: [] },
       ];
 
       jest.spyOn(service, 'findAll').mockResolvedValue(expectedCategories);
 
+      // Act
       const result = await controller.findAll();
 
+      // Assert
       expect(result).toEqual(expectedCategories);
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
 
     it('should return an empty array if no categories exist', async () => {
+      // Arrange
       jest.spyOn(service, 'findAll').mockResolvedValue([]);
 
+      // Act
       const result = await controller.findAll();
 
+      // Assert
       expect(result).toEqual([]);
       expect(service.findAll).toHaveBeenCalledTimes(1);
     });
@@ -106,19 +98,23 @@ describe('CategoryController', () => {
 
   describe('findOne', () => {
     it('should return a single category when it exists', async () => {
+      // Arrange
       const categoryId = '1';
-      const expectedCategory = { id: 1, name: 'Categoria A' };
+      const expectedCategory = { id: 1, name: 'Categoria A', devices: [] };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(expectedCategory);
 
+      // Act
       const result = await controller.findOne(categoryId);
 
+      // Assert
       expect(result).toEqual(expectedCategory);
       expect(service.findOne).toHaveBeenCalledWith(1);
       expect(service.findOne).toHaveBeenCalledTimes(1);
     });
 
     it('should propagate NotFoundException when category does not exist', async () => {
+      // Arrange
       const categoryId = '999';
 
       jest
@@ -129,6 +125,7 @@ describe('CategoryController', () => {
           ),
         );
 
+      // Act & Assert
       await expect(controller.findOne(categoryId)).rejects.toThrow(
         NotFoundException,
       );
@@ -139,19 +136,23 @@ describe('CategoryController', () => {
 
   describe('remove', () => {
     it('should remove a category successfully', async () => {
+      // Arrange
       const categoryId = '1';
-      const expectedResult = { affected: 1 };
+      const expectedResult = { raw: null, affected: 1 };
 
       jest.spyOn(service, 'remove').mockResolvedValue(expectedResult);
 
+      // Act
       const result = await controller.remove(categoryId);
 
+      // Assert
       expect(result).toEqual(expectedResult);
       expect(service.remove).toHaveBeenCalledWith(1);
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
 
     it('should propagate NotFoundException when trying to remove non-existent category', async () => {
+      // Arrange
       const categoryId = '999';
 
       jest
@@ -162,6 +163,7 @@ describe('CategoryController', () => {
           ),
         );
 
+      // Act & Assert
       await expect(controller.remove(categoryId)).rejects.toThrow(
         NotFoundException,
       );
@@ -169,3 +171,4 @@ describe('CategoryController', () => {
       expect(service.remove).toHaveBeenCalledTimes(1);
     });
   });
+});
