@@ -12,7 +12,11 @@ Projeto desafio para o Instituto Eldorado: um gerenciador de Dispositivos (e sua
 
 _[EN] Challenge project for Eldorado Institute application: a Device (and its Categories) manager with basic features._
 
-Swager: [http://localhost:3000/api](http://localhost:3000/api)
+
+
+**Acesso ao projeto provisionado (AWS):**
+- Frontend: [https://ec2-54-91-116-211.compute-1.amazonaws.com/](https://ec2-54-91-116-211.compute-1.amazonaws.com/)
+- API / Swagger: [https://ec2-54-91-116-211.compute-1.amazonaws.com:3000/api](https://ec2-54-91-116-211.compute-1.amazonaws.com:3000/api)
 
 ## Stack Tecnológica
 
@@ -47,8 +51,9 @@ docker compose down -v
 
 - _Tenha instalado o Node **22** ou superior (recomendo o uso do [NVM](https://github.com/nvm-sh/nvm))_
 - _Tenha o MySQL instalado (**9** ou superior)_
+- _Informe as credenciais de acesso ao banco de dados no prompt do script_
 
-<p>Após instalar o Node, siga os passos:</p>
+<p>Após instalar o Node, abra um prompt no GitBash e siga os passos:</p>
 
 ```bash
 # 1. Vá ao diretório raiz do projeto
@@ -57,8 +62,46 @@ cd eldorado-device-manager
 # 2. Execute o script 
 ./start-local.sh
 ```
+### Infraestrutura como Código (IaC) para AWS CloudFormation via CDK
+- _Local do script CDK: **./iac/lib/iac-stack.ts**, executável através do comando (dentro de ./iac): cdk bootstrap (e cdk deploy para publicar)_
+- _Local do script direto cloudFormation: **./iac/cloudformation/template.yaml**_
 
-## Run tests
+### Banco de Dados 
+[ script MySQL também contido em - ./api/database/sql/00-struct-and-populate.sql ]
+```bash
+CREATE DATABASE IF NOT EXISTS dmdb;
+USE dmdb;
+CREATE TABLE IF NOT EXISTS categories (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(128) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS devices (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         category_id INT NOT NULL,
+                         color VARCHAR(16) NOT NULL,
+                         part_number INT NOT NULL,
+                         FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+INSERT INTO categories (id, name)
+VALUES (1,'Alpha'),
+       (2,'Omega'),
+       (3,'Beta');
+
+INSERT INTO devices (id, category_id, color, part_number)
+VALUES (1,1,'Azul',225),
+       (2,1,'Cinza',6),
+       (3,2,'Preto',27),
+       (4,2,'Azul',16),
+       (5,2,'Verde',55),
+       (6,3,'Rosa',4),
+       (7,3,'Branco',77),
+       (8,3,'Preto',12),
+       (9,3,'Laranja',10);
+
+```
+## Testes
 
 ```bash
 # unit tests
@@ -71,42 +114,49 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Deployment
+### Considerações Finais
+Projeto feito em 4 dias para o desafio do Instituto Eldorado, visando demonstrar os conhecimentos nas tecnologias envolvidas.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Abaixo segue a minha autoavaliação:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Critério                                                                                                                                                             | Status |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| api + web all done                                                                                                                                                   | DONE   |
+| Category (id, name)                                                                                                                                                  | DONE   |
+| Web app must have a menu with two options: Category Management, Device Management.                                                                                   | DONE   |
+| You must implement Create, Read and Delete.                                                                                                                          | DONE   |
+| Device -> Id: (generated automatically. Integer and incremental)                                                                                                     | DONE   |
+| Device -> Category: A dropdown selection you can choose from all categories available.                                                                               | DONE   |
+| Device -> Color: Text field, with validation (letters only, max size 16)                                                                                             | DONE   |
+| Device -> partNumber:  positive integer field, with validation.                                                                                                      | DONE   |
+| Category -> Id: (generated automatically, integer and incremental)                                                                                                   | DONE   |
+| Category -> Name -> Must not be empty.                                                                                                                               | DONE   |
+| Category -> Name -> Max size 128 chars.                                                                                                                              | DONE   |
+| All Fields mandatory                                                                                                                                                 | DONE   |
+| The APP must list all devices and categories, and also have screens/components that enable the user to create or remove new categories and devices.                  | DONE   |
+| Front End must be implemented with the latest LTS Angular. ( >=18 )                                                                                                  | DONE   |
+| Backend must be implemented in NodeJS (latest LTS).  ( 22.16.0 )                                                                                                     | DONE   |
+| Automated tests on the backend is not mandatory but is a PLUS                                                                                                        | WIP    |
+| Devices and Categories MUST be persisted on a MySQL database.                                                                                                        | DONE   |
+| You must provide the script (SQL or any database versioning/migration script)  that can  create the database from scratch                                            | DONE   |
+| Use GIT,  commit every progress you made, and share your code on a github public repository.at can  create the database from scratch                                 | DONE   |
+| Deploy your project on a cloud provider (AWS, GCP, Heroku or any other), and send the URL of your web application, and the URL of your GIT repo.                     | DONE   |
+| In case the project could not be deployed, it must be ready to run and install on a Ubuntu 18 linux machine ( via Docker ou npm - README)                            | DONE   |
+| Clone the repo. (create the local database based on the script given). Run front end and back end locally.                                                           | DONE   |
+| Use Docker to run the backend and database locally.                                                                                                                  | DONE   |
+| Include an Infrastructure as Code (IaC) script (e.g., Terraform or CloudFormation) to provision any or all of the required infrastructure (such as EC2, RDS, or S3). | DONE   |
+| Documentation - a clear and readable README file                                                                                                                     | DONE   |
+| Code quality – Readability, structure, and maintainability of your code. (code has been "Linted" and revised)                                                        | DONE   |
+| Project structure – Clear separation of concerns between frontend, backend, and database layers                                                                      | DONE   |
+| Correctness – The app must meet the functional requirements (CRUD, validation, etc.).                                                                                | DONE   |
+| Frontend usability – Basic usability, responsiveness, and a functional UI built with Angular.                                                                        | DONE   |
+| API design – Clean and consistent REST endpoints ( OpenAPI via Swagger @ localhost:3000/api )                                                                        | DONE   |
+| Database design – Proper use of relations and data constraints in MySQL                                                                                              | DONE   |
+| Git usage – Clear and consistent commit history. ( Gitflow conventions applyed)                                                                                      | DONE   |
+| Cloud deployment (AWS preferred)                                                                                                                                     | DONE   |
+| Infrastructure as Code (Terraform, CloudFormation)                                                                                                                   | DONE   |
+| Docker usage to simplify local setup                                                                                                                                 | DONE   |
+| Automated backend tests                                                                                                                                              | WIP    |
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+_Autor: João Robson Reis Jr_
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
