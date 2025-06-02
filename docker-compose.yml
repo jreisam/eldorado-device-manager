@@ -1,0 +1,73 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: api-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_HOST=mysql
+      - DATABASE_USER=dmuser
+      - DATABASE_PASSWORD=dmpasswd
+      - DATABASE_NAME=dmdb
+      - DATABASE_PORT=3306
+    networks:
+      - app-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+    command: >
+      sh -c "
+        echo 'Esperando o MySQL iniciar completamente...'
+        sleep 10
+        node dist/main
+      "
+
+
+  frontend:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    container_name: web-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - ./nginx-logs:/var/log/nginx
+
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-dmdb
+    restart: always
+    environment:
+      MYSQL_DATABASE: dmdb
+      MYSQL_USER: dmuser
+      MYSQL_PASSWORD: dmpasswd
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "dmuser", "-pdmpasswd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

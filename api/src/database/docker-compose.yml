@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-dmdb
+    restart: always
+    environment:
+      MYSQL_DATABASE: dmdb
+      MYSQL_USER: dmuser
+      MYSQL_PASSWORD: dmpasswd
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mysql-network
+
+networks:
+  mysql-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
