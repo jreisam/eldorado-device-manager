@@ -46,7 +46,7 @@ docker compose up -d
 # Para finalizar e remover os containers
 docker compose down -v
 ```
-
+A aplicação estará disponível em: [http://localhost](http://localhost)
 ### Usando NPM e GitBash
 
 - _Tenha instalado o Node **22** ou superior (recomendo o uso do [NVM](https://github.com/nvm-sh/nvm))_
@@ -63,9 +63,14 @@ cd eldorado-device-manager
 ./start-local.sh
 ```
 ### Infraestrutura como Código (IaC) para AWS CloudFormation via CDK
-- _Local do script CDK: **./iac/lib/iac-stack.ts**, executável através do comando (dentro de ./iac): cdk bootstrap (e cdk deploy para publicar)_
-- _Local do script direto cloudFormation: **./iac/cloudformation/template.yaml**_
-
+- _Local do script CDK: **./iac/lib/iac-stack.ts**, executar e publicar através dos comandos (dentro de ./iac):_
+```bash
+# Provisionar toda a infraestrutura
+cdk bootstrap
+# Publicar
+cdk deploy
+```
+- _Local do template cloudFormation: **./iac/cloudformation/template.yaml**_
 ### Banco de Dados 
 [ script MySQL também contido em - ./api/database/sql/00-struct-and-populate.sql ]
 ```bash
@@ -104,6 +109,7 @@ VALUES (1,1,'Azul',225),
 ## Testes
 
 ```bash
+ (WIP)
 # unit tests
 $ npm run test
 
@@ -115,7 +121,7 @@ $ npm run test:cov
 ```
 
 ### Considerações Finais
-Projeto feito em 4 dias para o desafio do Instituto Eldorado, visando demonstrar os conhecimentos nas tecnologias envolvidas.
+Projeto feito em 4 dias para o desafio do Instituto Eldorado, visando demonstrar o conhecimento nas tecnologias envolvidas.
 
 Abaixo segue a minha autoavaliação:
 
