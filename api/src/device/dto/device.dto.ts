@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateDeviceDto {
+export class DeviceDto {
   @ApiProperty({
     description: 'ID da categoria do dispositivo',
     example: 1,

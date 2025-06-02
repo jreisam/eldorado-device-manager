@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateDeviceDto } from '../dto/create-device.dto';
+import { DeviceDto } from '../dto/device.dto';
 import { DeviceService } from '../service/device.service';
 
 @ApiTags('Dispositivos')
@@ -12,7 +12,7 @@ export class DeviceController {
   @ApiOperation({ summary: 'Cria um novo dispositivo' })
   @ApiResponse({ status: 201, description: 'Dispositivo criado com sucesso.' })
   @ApiResponse({ status: 400, description: 'Requisição inválida.' })
-  create(@Body() createDeviceDto: CreateDeviceDto) {
+  create(@Body() createDeviceDto: DeviceDto) {
     return this.deviceService.create(createDeviceDto);
   }
 

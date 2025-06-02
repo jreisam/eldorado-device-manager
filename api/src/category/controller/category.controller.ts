@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CategoryService } from '../service/category.service';
-import { CreateCategoryDto } from '../dto/create-category.dto';
+import { CategoryDto } from '../dto/category.dto';
 
 @ApiTags('Categorias')
 @Controller('categories')
@@ -12,7 +12,7 @@ export class CategoryController {
   @ApiResponse({ status: 201, description: 'Categoria criada com sucesso.' })
   @ApiResponse({ status: 400, description: 'Requisição inválida.' })
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  create(@Body() createCategoryDto: CategoryDto) {
     return this.categoryService.create(createCategoryDto);
   }
 

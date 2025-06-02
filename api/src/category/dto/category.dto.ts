@@ -1,7 +1,7 @@
 import { IsNotEmpty, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCategoryDto {
+export class CategoryDto {
   @ApiProperty({
     description: 'Nome da categoria do dispositivo',
     example: 'Smartphones',

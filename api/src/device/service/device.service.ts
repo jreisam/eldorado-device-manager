@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Device } from '../entity/device.entity';
-import { CreateDeviceDto } from '../dto/create-device.dto';
+import { DeviceDto } from '../dto/device.dto';
 
 @Injectable()
 export class DeviceService {
@@ -11,7 +11,7 @@ export class DeviceService {
     private deviceRepository: Repository<Device>,
   ) {}
 
-  create(createDeviceDto: CreateDeviceDto) {
+  create(createDeviceDto: DeviceDto) {
     const device = this.deviceRepository.create(createDeviceDto);
     return this.deviceRepository.save(device);
   }
