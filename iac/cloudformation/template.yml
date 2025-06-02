@@ -1,0 +1,287 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template para aplicação NestJS/Angular'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    Description: Nome do ambiente (dev, staging, prod)
+
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    Description: Tipo de instância EC2 para o backend
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Nome do par de chaves para acessar as instâncias EC2
+
+  S3BucketName:
+    Type: String
+    Description: Nome do bucket S3 para hospedar o frontend Angular
+
+  VpcCIDR:
+    Type: String
+    Default: 10.0.0.0/16
+    Description: CIDR para a VPC
+
+  PublicSubnet1CIDR:
+    Type: String
+    Default: 10.0.1.0/24
+    Description: CIDR para a subnet pública 1
+
+  PublicSubnet2CIDR:
+    Type: String
+    Default: 10.0.2.0/24
+    Description: CIDR para a subnet pública 2
+
+  DatabaseName:
+    Type: String
+    Default: appdb
+    Description: Nome do banco de dados
+
+  DatabaseUser:
+    Type: String
+    Default: admin
+    NoEcho: true
+    Description: Nome de usuário do banco de dados
+
+  DatabasePassword:
+    Type: String
+    NoEcho: true
+    Description: Senha do banco de dados
+
+Resources:
+  # VPC e rede
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-igw
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet-1
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet2CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet-2
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-route-table
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  # Grupo de segurança para o backend
+  BackendSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Grupo de segurança para o backend NestJS
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+
+  # Grupo de segurança para o RDS
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Grupo de segurança para o RDS
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref BackendSecurityGroup
+
+  # RDS para MySQL
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group para o RDS
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref DatabaseName
+      Engine: mysql
+      EngineVersion: 8.0.28
+      MasterUsername: !Ref DatabaseUser
+      MasterUserPassword: !Ref DatabasePassword
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      StorageType: gp2
+      MultiAZ: false
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DatabaseSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-database
+
+  # Backend EC2
+  BackendInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: Database
+    Properties:
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref BackendSecurityGroup
+      KeyName: !Ref KeyName
+      ImageId: ami-0c55b159cbfafe1f0  # Amazon Linux 2 AMI
+      SubnetId: !Ref PublicSubnet1
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum update -y
+          yum install -y git
+
+          # Instalar Node.js
+          curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+          yum install -y nodejs
+
+          # Instalar PM2
+          npm install pm2 -g
+
+          # Clonar o repositório do projeto
+          mkdir -p /opt/app
+          cd /opt/app
+          git clone https://github.com/jreisam/eldorado-device-manager.git .
+
+          # Configurar variáveis de ambiente
+          cat > /opt/app/.env << EOF
+          DATABASE_HOST=${Database.Endpoint.Address}
+          DATABASE_PORT=3306
+          DATABASE_USER=${DatabaseUser}
+          DATABASE_PASSWORD=${DatabasePassword}
+          DATABASE_NAME=${DatabaseName}
+          PORT=3000
+          EOF
+
+          # Instalar dependências e construir a aplicação
+          cd /opt/app
+          npm install
+          npm run build
+
+          # Iniciar a aplicação com PM2
+          pm2 start dist/main.js --name api
+          pm2 startup
+          pm2 save
+
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-backend
+
+  # CloudFront para o frontend
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt FrontendBucket.DomainName
+            Id: S3Origin
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        Enabled: true
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          TargetOriginId: S3Origin
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+
+Outputs:
+  BackendURL:
+    Description: URL da API backend
+    Value: !Sub http://${BackendInstance.PublicDnsName}:3000
+
+  FrontendURL:
+    Description: URL do frontend
+    Value: !Sub https://${CloudFrontDistribution.DomainName}
+
+  DatabaseEndpoint:
+    Description: Endpoint do banco de dados
+    Value: !GetAtt Database.Endpoint.Address
