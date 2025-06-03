@@ -12,11 +12,9 @@ Projeto desafio para o Instituto Eldorado: um gerenciador de Dispositivos (e sua
 
 _[EN] Challenge project for Eldorado Institute application: a Device (and its Categories) manager with basic features._
 
-
-
 **Acesso ao projeto provisionado (AWS):**
-- Frontend: [https://ec2-54-91-116-211.compute-1.amazonaws.com/](https://ec2-54-91-116-211.compute-1.amazonaws.com/)
-- API / Swagger: [https://ec2-54-91-116-211.compute-1.amazonaws.com:3000/api](https://ec2-54-91-116-211.compute-1.amazonaws.com:3000/api)
+- Frontend: [http://ec2-54-91-116-211.compute-1.amazonaws.com](http://ec2-54-91-116-211.compute-1.amazonaws.com)
+- API / Swagger: [http://ec2-54-91-116-211.compute-1.amazonaws.com:3000/api](http://ec2-54-91-116-211.compute-1.amazonaws.com:3000/api)
 
 ## Stack Tecnológica
 
