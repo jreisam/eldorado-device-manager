@@ -142,7 +142,7 @@ Abaixo segue a minha autoavaliação:
 | The APP must list all devices and categories, and also have screens/components that enable the user to create or remove new categories and devices.                  | DONE   |
 | Front End must be implemented with the latest LTS Angular. ( >=18 )                                                                                                  | DONE   |
 | Backend must be implemented in NodeJS (latest LTS).  ( 22.16.0 )                                                                                                     | DONE   |
-| Automated tests on the backend is not mandatory but is a PLUS                                                                                                        | WIP    |
+| Automated tests on the backend is not mandatory but is a PLUS                                                                                                        | DONE   |
 | Devices and Categories MUST be persisted on a MySQL database.                                                                                                        | DONE   |
 | You must provide the script (SQL or any database versioning/migration script)  that can  create the database from scratch                                            | DONE   |
 | Use GIT,  commit every progress you made, and share your code on a github public repository.at can  create the database from scratch                                 | DONE   |
@@ -162,7 +162,7 @@ Abaixo segue a minha autoavaliação:
 | Cloud deployment (AWS preferred)                                                                                                                                     | DONE   |
 | Infrastructure as Code (Terraform, CloudFormation)                                                                                                                   | DONE   |
 | Docker usage to simplify local setup                                                                                                                                 | DONE   |
-| Automated backend tests                                                                                                                                              | WIP    |
+| Automated backend tests                                                                                                                                              | DONE   |
 
 _Autor: João Robson Reis Jr_
 
